@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hot.modules.sys.dao.SysRoleDao">
+
+	<resultMap id="roleMap" type="com.hot.modules.sys.entity.SysRole">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<collection property="buttlist" ofType="integer" column="butt_role_id" javaType="java.util.ArrayList">
+			<id property="id" column="butt_role_id"/>
+		</collection>
+		<collection property="datalist" ofType="integer" column="data_id" javaType="java.util.ArrayList">
+			<id property="id" column="data_id"/>
+		</collection>
+		<collection property="menulist" ofType="integer" column="menu_role_id" javaType="java.util.ArrayList">
+			<id property="id" column="menu_role_id"/>
+		</collection>
+		<collection property="modulist" ofType="integer" column="modu_role_id" javaType="java.util.ArrayList">
+			<id property="id" column="modu_role_id"/>
+		</collection>
+	</resultMap>
+
+	<select id="get" resultMap="roleMap">
+		SELECT
+			a.id,
+			a.name,
+			b.`butt_role_id`,
+			c.`data_id`,
+			d.`menu_role_id`,
+			e.`modu_role_id`
+		FROM `sys_role` a
+		LEFT JOIN `sys_role_butt` b ON b.`role_id` = a.`id`
+		LEFT JOIN `sys_role_data` c ON b.`role_id` = a.`id`
+		LEFT JOIN `sys_role_menu` d ON d.`role_id` = a.`id`
+		LEFT JOIN `sys_role_modu` e ON e.`role_id` = a.`id`
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="list" resultType="com.hot.modules.sys.entity.SysRole">
+		SELECT
+			id,
+			`name`,
+			update_time AS 'updateTime'
+		FROM `sys_role`
+		WHERE del_flag = 0
+		<if test="name != null and name != ''">
+			AND name LIKE CONCAT("%",#{name},"%")
+		</if>
+		ORDER BY update_time DESC
+	</select>
+
+	<insert id="insert" parameterType="com.hot.modules.sys.entity.SysRole" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO `sys_role`(
+			`name`,
+			`create_user`,
+			`create_time`,
+			`update_user`,
+			`update_time`
+		) VALUES (
+			#{name},
+			#{createUser},
+			NOW(),
+			#{createUser},
+			NOW()
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE `sys_role` SET
+			`name` = #{name},
+			`update_user` = #{createUser},
+			`update_time` = NOW()
+		WHERE id = #{id}
+	</update>
+
+	<update id="delete">
+		UPDATE `sys_role` SET
+			`del_flag` = 1,
+			`update_user` = #{createUser},
+			`update_time` = NOW()
+		WHERE id = #{id}
+	</update>
+
+	<insert id="insertButt">
+		INSERT INTO `sys_role_butt`(
+			`role_id`,
+			`butt_role_id`
+		) VALUES
+		<foreach collection="buttlist" item="item" separator=",">
+			(#{id},#{item})
+		</foreach>
+	</insert>
+
+	<delete id="deleteButt">
+		DELETE FROM `sys_role_butt` WHERE role_id = #{id}
+	</delete>
+
+	<insert id="insertData">
+		INSERT INTO `sys_role_data`(
+			`role_id`,
+			`data_id`
+		) VALUES
+		<foreach collection="datalist" item="item" separator=",">
+			(#{id},#{item})
+		</foreach>
+	</insert>
+
+	<delete id="deleteData">
+		DELETE FROM `sys_role_data` WHERE role_id = #{id}
+	</delete>
+
+	<insert id="insertMenu">
+		INSERT INTO `sys_role_menu`(
+			`role_id`,
+			`menu_role_id`
+		) VALUES
+		<foreach collection="menulist" item="item" separator=",">
+			(#{id},#{item})
+		</foreach>
+	</insert>
+
+	<delete id="deleteMenu">
+		DELETE FROM `sys_role_menu` WHERE role_id = #{id}
+	</delete>
+
+	<insert id="insertModu">
+		INSERT INTO `sys_role_modu`(
+			`role_id`,
+			`modu_role_id`
+		) VALUES
+		<foreach collection="modulist" item="item" separator=",">
+			(#{id},#{item})
+		</foreach>
+	</insert>
+
+	<delete id="deleteModu">
+		DELETE FROM `sys_role_modu` WHERE role_id = #{id}
+	</delete>
+
+</mapper>
