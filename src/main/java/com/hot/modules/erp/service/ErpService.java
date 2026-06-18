@@ -1,16 +1,26 @@
 package com.hot.modules.erp.service;
 
 import com.google.gson.Gson;
+import com.hot.modules.erp.dao.ErpDao;
+import com.hot.modules.erp.entity.ErpMaterial;
+import com.hot.modules.erp.entity.MaterialEntity;
 import com.kingdee.bos.webapi.entity.QueryParam;
 import com.kingdee.bos.webapi.entity.RepoRet;
 import com.kingdee.bos.webapi.sdk.K3CloudApi;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ErpService {
+
+    @Autowired
+    private ErpDao erpDao;
 
     @Autowired
     private K3CloudApi k3CloudApi;
@@ -92,6 +102,39 @@ public class ErpService {
      * @return 查询结果
      */
     public <T> List<T> executeBillQuery(QueryParam queryParam, Class<T> type) throws Exception {
-        return k3CloudApi.executeBillQuery(queryParam, type);
+        List<T> resultList = k3CloudApi.executeBillQuery(queryParam, type);
+        if (resultList != null && !resultList.isEmpty() && type == MaterialEntity.class) {
+            try {
+                // 转换为数据库实体并保存
+                List<ErpMaterial> erpMaterials = convertToErpMaterial((List<MaterialEntity>) resultList);
+                erpDao.saveOrUpdateBatch(erpMaterials);
+                log.info("成功保存 {} 条物料数据到数据库", erpMaterials.size());
+            } catch (Exception e) {
+                log.error("保存物料数据到数据库失败", e);
+            }
+        }
+        return resultList;
+    }
+
+    /**
+     * 将金蝶物料实体转换为数据库物料实体
+     */
+    private List<ErpMaterial> convertToErpMaterial(List<MaterialEntity> materialEntities) {
+        if (materialEntities == null || materialEntities.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<ErpMaterial> erpMaterials = new ArrayList<>();
+        for (MaterialEntity entity : materialEntities) {
+            ErpMaterial material = new ErpMaterial();
+            // 注意：金蝶返回的字段名是 fnumber, fspecification, fcolor
+            material.setMaterialId(entity.getFNumber());
+            material.setModelNumber(entity.getFSpecification());
+            material.setColor(entity.getFColor());
+            // createTime 和 updateTime 在SQL中使用 NOW() 设置
+            // delFlag 默认为 '0'
+            erpMaterials.add(material);
+        }
+        return erpMaterials;
     }
 }
