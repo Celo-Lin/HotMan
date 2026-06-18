@@ -48,3 +48,14 @@ logging:
     path: D:/hot/log/hot
   config:
     classpath: logback-spring.xml
+
+# 金蝶erp
+kingdee:
+  k3cloud:
+    server-url: https://kd.havitgo.com/k3cloud/
+    dc-id: 68c13132409460
+    user-name: 管理账号
+    password: 68c13132409460
+    app-id: 327246_X30qwZkKQol51eyuwfQL7+8K3LS/1pOv
+    app-secret: 4c56306cf29d4e54900d57a86e3abc17
+    lcId: 2052
