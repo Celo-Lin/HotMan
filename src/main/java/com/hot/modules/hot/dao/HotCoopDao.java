@@ -1,9 +1,6 @@
 package com.hot.modules.hot.dao;
 
-import com.hot.modules.hot.entity.HotCoop;
-import com.hot.modules.hot.entity.HotCoopData;
-import com.hot.modules.hot.entity.HotCoopProduct;
-import com.hot.modules.hot.entity.HotCoopSett;
+import com.hot.modules.hot.entity.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -22,7 +19,7 @@ public interface HotCoopDao {
 
     int delete(@Param("id") Integer id, @Param("userid") String userid);
 
-    int close(@Param("id") Integer id, @Param("userid")String userid);
+    int close(@Param("ids") String[] ids, @Param("userid")String userid);
 
     void deleteList(@Param("id")Integer id, @Param("userid") String userid);
 
@@ -37,4 +34,6 @@ public interface HotCoopDao {
     void insertData(HotCoopData data);
 
     void updateData(HotCoopData data);
+
+    List<HotCoopReport> coop(HotCoopReport coop);
 }

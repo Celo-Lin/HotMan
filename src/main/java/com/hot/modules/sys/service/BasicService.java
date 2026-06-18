@@ -2,11 +2,9 @@ package com.hot.modules.sys.service;
 
 import com.hot.common.constant.AuthConstant;
 import com.hot.common.util.RedisUtils;
+import com.hot.modules.hot.entity.Product;
 import com.hot.modules.sys.dao.BasicDao;
-import com.hot.modules.sys.entity.BasicData;
-import com.hot.modules.sys.entity.BasicTree;
-import com.hot.modules.sys.entity.SysMenu;
-import com.hot.modules.sys.entity.SysUser;
+import com.hot.modules.sys.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class BasicService {
@@ -82,7 +81,7 @@ public class BasicService {
             }
             if (list0 == null) {
                 // 从数据库重新加载并构建菜单树
-                List<SysMenu> list = basicDao.menu(userid, 1);
+                List<SysMenu> list = basicDao.menu(userid);
                 list0 = new ArrayList<>();
                 Map<Integer, SysMenu> map = new HashMap<>();
 
@@ -125,7 +124,7 @@ public class BasicService {
                 list = (List<SysMenu>) cached;
             }
             if (list == null) {
-                list = basicDao.modu(userid, 1);
+                list = basicDao.modu(userid);
                 if (!list.isEmpty()) {
                     redisUtils.set(AuthConstant.MODU_CACHE + userid, list);
                 }
@@ -145,13 +144,39 @@ public class BasicService {
                 list = (List<SysMenu>) cached;
             }
             if (list == null) {
-                list = basicDao.butt(userid, 1);
+                list = basicDao.butt(userid);
                 if (!list.isEmpty()) {
                     redisUtils.set(AuthConstant.BUTT_CACHE + userid, list);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Product> product(Product product) {
+        return basicDao.product(product);
+    }
+
+    public List<SysData> field(String userid) {
+        List<SysData> list = new ArrayList<>();
+        List<SysField> arr = basicDao.field(userid);
+        List<SysField> cooparr = arr.stream().filter(field -> field.getType().equals("a_hot_coop")).collect(Collectors.toList());
+        if (cooparr != null && cooparr.size() > 0) {
+            SysData d = new SysData();
+            d.setType("a_hot_coop");
+            SysCoopField coop = new SysCoopField();
+            List<SysField> coopList = cooparr.stream().filter(field -> field.getTable().equals("a_hot_coop")).collect(Collectors.toList());
+            List<SysField> dataList = cooparr.stream().filter(field -> field.getTable().equals("a_hot_coop_data")).collect(Collectors.toList());
+            List<SysField> productList = cooparr.stream().filter(field -> field.getTable().equals("a_hot_coop_product")).collect(Collectors.toList());
+            List<SysField> settList = cooparr.stream().filter(field -> field.getTable().equals("a_hot_coop_sett")).collect(Collectors.toList());
+            coop.setCoop(coopList);
+            coop.setData(dataList);
+            coop.setProduct(productList);
+            coop.setSett(settList);
+            d.setField(coop);
+            list.add(d);
         }
         return list;
     }

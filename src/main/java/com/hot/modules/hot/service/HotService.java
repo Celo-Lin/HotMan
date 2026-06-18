@@ -3,9 +3,12 @@ package com.hot.modules.hot.service;
 import com.hot.modules.hot.dao.HotDao;
 import com.hot.modules.hot.entity.Hot;
 import com.hot.modules.hot.entity.HotBasic;
+import com.hot.modules.hot.entity.HotCoop;
+import com.hot.modules.hot.entity.HotInvit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,7 +117,33 @@ public class HotService {
         return i;
     }
 
+    public int insert(Hot hot) {
+        return hotDao.insert(hot);
+    }
+
     public int state(Hot hot) {
         return hotDao.state(hot);
     }
+
+    public HotBasic getBasic(String hotsId, String channel) {
+        return hotDao.getBasic(hotsId, channel);
+    }
+
+    public List<HotInvit> invit(HotInvit invit) {
+        return hotDao.invit(invit);
+    }
+
+    public List<HotCoop> coop(HotCoop coop) {
+        return hotDao.coop(coop);
+    }
+
+    public int updateBasic(HotBasic h) {
+        return hotDao.updateBasic(h);
+    }
+
+    public int insertBasic(List<HotBasic> basic, Integer id) {
+        return hotDao.insertBasicList(id, basic);
+    }
+
+
 }

@@ -1,10 +1,7 @@
 package com.hot.modules.hot.service;
 
 import com.hot.modules.hot.dao.HotCoopDao;
-import com.hot.modules.hot.entity.HotCoop;
-import com.hot.modules.hot.entity.HotCoopData;
-import com.hot.modules.hot.entity.HotCoopProduct;
-import com.hot.modules.hot.entity.HotCoopSett;
+import com.hot.modules.hot.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,7 +71,11 @@ public class HotCoopService {
         return coopDao.delete(id,userid);
     }
 
-    public int close(Integer id, String userid) {
-        return coopDao.close(id,userid);
+    public int close(String[] ids, String userid) {
+        return coopDao.close(ids,userid);
+    }
+
+    public List<HotCoopReport> coop(HotCoopReport coop) {
+        return coopDao.coop(coop);
     }
 }

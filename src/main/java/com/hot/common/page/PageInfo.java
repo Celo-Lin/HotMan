@@ -1,5 +1,6 @@
 package com.hot.common.page;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.pagehelper.Page;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ import java.util.List;
  * 精简分页对象，仅保留 pageNum、pageSize、total、pages、list 五个字段。
  * 兼容 PageHelper：当传入的 list 为 PageHelper 分页查询结果（Page）时，自动提取分页信息。
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class PageInfo<T> implements Serializable {
 

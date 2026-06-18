@@ -6,8 +6,6 @@
 		<id property="id" column="id"/>
 		<result property="docNum" column="docNum"/>
 		<result property="bdName" column="bdName"/>
-		<result property="connTime" column="connTime"/>
-		<result property="agccTime" column="agccTime"/>
 		<result property="hotbId" column="hotbId"/>
 		<result property="hotsId" column="hotsId"/>
 		<result property="channel" column="channel"/>
@@ -92,8 +90,6 @@
 			a.id,
 			a.doc_num AS 'docNum',
 			a.bd_name AS 'bdName',
-			a.conn_time AS 'connTime',
-			a.agcc_time AS 'agccTime',
 			a.hotb_id AS 'hotbId',
 			a.hots_id AS 'hotsId',
 			a.channel,
@@ -177,8 +173,6 @@
 			a.id,
 			a.doc_num AS 'docNum',
 			a.bd_name AS 'bdName',
-			a.conn_time AS 'connTime',
-			a.agcc_time AS 'agccTime',
 			a.hotb_id AS 'hotbId',
 			a.hots_id AS 'hotsId',
 			a.channel,
@@ -212,6 +206,12 @@
 		<if test="projectName != null and projectName != ''">
 			AND c.name LIKE CONCAT('%',#{projectName},'%')
 		</if>
+		<if test="ids != null and ids.length > 0 ">
+			AND a.`id` IN
+			<foreach item="item" index="index" collection="ids" separator="," open="(" close=")">
+				#{item}
+			</foreach>
+		</if>
 		ORDER BY id DESC
 	</select>
 
@@ -219,8 +219,6 @@
 		INSERT INTO `a_hot_coop` (
 			`doc_num`,
 			`bd_name`,
-			`conn_time`,
-			`agcc_time`,
 			`hotb_id`,
 			`hots_id`,
 			`channel`,
@@ -234,8 +232,6 @@
 		) VALUES (
 			#{docNum},
 			#{bdName},
-			#{connTime},
-			#{agccTime},
 			#{hotbId},
 			#{hotsId},
 			#{channel},
@@ -251,8 +247,6 @@
 
 	<update id="update" parameterType="com.hot.modules.hot.entity.HotCoop">
 		UPDATE `a_hot_coop` SET
-			`conn_time` = #{connTime},
-			`agcc_time` = #{agccTime},
 			`hotb_id` = #{hotbId},
 			`hots_id` = #{hotsId},
 			`channel` = #{channel},
@@ -277,7 +271,10 @@
 			`state` = 2,
 			`update_user` = #{userid},
 			`update_time` = NOW()
-		WHERE id = #{id}
+		WHERE id IN
+		<foreach item="item" index="index" collection="ids" separator="," open="(" close=")">
+			#{item}
+		</foreach>
 	</update>
 
 	<update id="deleteList">
@@ -541,5 +538,67 @@
 			`del_flag` = 0
 		WHERE id = #{id}
 	</update>
+	
+	<select id="coop" resultType="com.hot.modules.hot.entity.HotCoopReport">
+		SELECT
+			a.`id`,
+			a.doc_num AS docNum,
+			a.bd_name AS bdName,
+			a.hots_id AS hotsId,
+			a.channel,
+			a.country,
+			a.state,
+			d.`label` AS states,
+			b.rele_chan AS releChan,
+			b.rele_acct AS releAcct,
+			b.vid_type AS vidType,
+			b.vid_draft_url AS vidDraftUrl,
+			b.online_url AS onlineUrl,
+			b.views,
+			b.likes,
+			b.comments,
+			b.shares,
+			b.period,
+			b.spend,
+			b.plays,
+			b.clicks AS dclicks,
+			b.conve,
+			b.roas AS droas,
+			c.product_model AS productModel,
+			c.product_color AS productColor,
+			c.video_auth_pur AS videoAuthPur,
+			c.coop_form AS coopForm,
+			c.plat_form AS platForm,
+			c.coop_fee AS coopFee,
+			c.sash_no AS sashNo,
+			c.carrier,
+			c.wl_status AS wlStatus,
+			c.utm_url AS utmUrl,
+			c.sales_period AS salesPeriod,
+			c.clicks,
+			c.sales,
+			c.gmv AS gmv,
+			c.roas AS roas
+		FROM `a_hot_coop` a
+		LEFT JOIN `a_hot_coop_data` b ON b.`coop_id` = a.`id` AND b.`del_flag` = 0
+		LEFT JOIN `a_hot_coop_product` c ON c.`coop_id` = a.`id` AND c.`del_flag` = 0
+		LEFT JOIN `sys_dict` d ON d.`value` = a.`state` AND d.`type` = 'hot_state' AND d.`del_flag` = 0
+		WHERE a.`del_flag` = 0
+		<if test="country != null and country != ''">
+			AND a.`country` LIKE CONCAT('%',#{country},'%')
+		</if>
+		<if test="bdName != null and bdName != ''">
+			AND a.`bd_name` LIKE CONCAT('%',#{bdName},'%')
+		</if>
+		<if test="state != null and state != ''">
+			AND a.`state` = #{state}
+		</if>
+		<if test="channel != null and docNum != ''">
+			AND a.`channel` = #{channel}
+		</if>
+		<if test="hotsId != null and hotsId != ''">
+			AND a.`hots_id` LIKE CONCAT('%',#{hotsId},'%')
+		</if>
+	</select>
 
 </mapper>

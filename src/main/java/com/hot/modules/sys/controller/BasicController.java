@@ -1,7 +1,11 @@
 package com.hot.modules.sys.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.hot.common.page.PageInfo;
 import com.hot.common.result.Result;
 import com.hot.common.util.UserUtils;
+import com.hot.modules.hot.entity.HotCoopReport;
+import com.hot.modules.hot.entity.Product;
 import com.hot.modules.sys.entity.BasicData;
 import com.hot.modules.sys.entity.SysUser;
 import com.hot.modules.sys.service.BasicService;
@@ -54,6 +58,22 @@ public class BasicController {
     @PostMapping("/butt")
     public Result<?> butt(HttpServletRequest request) {
         return Result.success(basicService.butt(currentUserId(request)));
+    }
+
+    /** 当前用户字段*/
+    @PostMapping("/field")
+    public Result<?> field(HttpServletRequest request) {
+        return Result.success(basicService.field(currentUserId(request)));
+    }
+
+
+
+    @PostMapping("/product")
+    public Result<?> product(@ModelAttribute Product product) {
+        int p = product.getPageNum() == null || product.getPageNum() < 1 ? 1 : product.getPageNum();
+        int s = product.getPageSize() == null || product.getPageSize() < 1 ? 10 : product.getPageSize();
+        PageHelper.startPage(p, s);
+        return Result.success(new PageInfo<>(basicService.product(product)));
     }
 
     /** 取当前登录用户的 id。 */

@@ -43,6 +43,7 @@ public class SysUserController {
     /** 增 / 改：无 id 为新增，有 id 为修改。 */
     @PostMapping("/save")
     public Result<Void> save(HttpServletRequest request, @ModelAttribute SysUser sysUser) {
+        System.out.println("sysUser:" + sysUser.toString());
         SysUser u = UserUtils.getCurrentUser(request);
         if (u == null) return Result.of(ResultCode.NO_LOGIN);
         sysUser.setUserType(null);// 用户类型

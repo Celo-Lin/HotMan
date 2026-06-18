@@ -3,6 +3,7 @@ package com.hot.modules.hot.service;
 import com.hot.modules.hot.dao.HotInvitDao;
 import com.hot.modules.hot.entity.HotInvit;
 import com.hot.modules.hot.entity.HotInvitDema;
+import com.hot.modules.hot.entity.HotInvitReport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -69,5 +70,9 @@ public class HotInvitService {
 
     public int close(String[] ids, String userid) {
         return invitDao.close(ids,userid);
+    }
+
+    public List<HotInvitReport> invit(HotInvitReport invit) {
+        return invitDao.invit(invit);
     }
 }

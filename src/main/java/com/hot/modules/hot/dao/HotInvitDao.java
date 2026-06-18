@@ -2,6 +2,7 @@ package com.hot.modules.hot.dao;
 
 import com.hot.modules.hot.entity.HotInvit;
 import com.hot.modules.hot.entity.HotInvitDema;
+import com.hot.modules.hot.entity.HotInvitReport;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -29,4 +30,6 @@ public interface HotInvitDao {
     void updateDema(HotInvitDema dema);
 
     int close(@Param("ids")String[] ids, @Param("userid")String userid);
+
+    List<HotInvitReport> invit(HotInvitReport invit);
 }

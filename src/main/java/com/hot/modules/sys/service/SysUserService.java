@@ -70,12 +70,31 @@ public class SysUserService {
         if (StringUtils.hasText(sysUser.getPassword())) {
             sysUser.setPassword(PasswordUtil.encrypt(sysUser.getPassword()));
         }
-        if (!StringUtils.hasText(sysUser.getId())) {
+        int i = 0;
+        if (sysUser.getId() == null || sysUser.getId().equals("0")) {
             sysUser.setId(UUID.randomUUID().toString().replace("-", ""));
             sysUser.setCreateTime(now);
-            return sysUserDao.insert(sysUser);
+            i = sysUserDao.insert(sysUser);
+        } else {
+            i = sysUserDao.update(sysUser);
         }
-        return sysUserDao.update(sysUser);
+        sysUserDao.deleteButt(sysUser);
+        if (sysUser.getButtlist() != null && sysUser.getButtlist().size() > 0) {
+            sysUserDao.insertButt(sysUser);
+        }
+        sysUserDao.deleteData(sysUser);
+        if (sysUser.getDatalist() != null && sysUser.getDatalist().size() > 0) {
+            sysUserDao.insertData(sysUser);
+        }
+        sysUserDao.deleteMenu(sysUser);
+        if (sysUser.getMenulist() != null && sysUser.getMenulist().size() > 0) {
+            sysUserDao.insertMenu(sysUser);
+        }
+        sysUserDao.deleteModu(sysUser);
+        if (sysUser.getModulist() != null && sysUser.getModulist().size() > 0) {
+            sysUserDao.insertModu(sysUser);
+        }
+        return i;
     }
 
     @Transactional

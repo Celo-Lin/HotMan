@@ -45,6 +45,6 @@ mybatis:
 
 logging:
   file:
-    path: D:/web/log/hot
+    path: D:/hot/log/hot
   config:
     classpath: logback-spring.xml

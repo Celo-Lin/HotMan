@@ -77,12 +77,4 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         }
     }
 
-    /**
-     * 获取两个日期之间相差的天数。
-     */
-    public static long getDistanceOfTwoDate(Date before, Date after) {
-        long beforeTime = before.getTime();
-        long afterTime = after.getTime();
-        return (afterTime - beforeTime) / (1000 * 60 * 60 * 24);
-    }
 }

@@ -17,6 +17,7 @@
 		SELECT
 			id,
 			hots_id AS 'hotsId',
+			channel,
 			nickname,
 			country,
 			contact,
@@ -41,6 +42,7 @@
 			d.`label` AS 'states',
 			a.create_time AS 'createTime',
 			b.id AS 'id',
+			b.hots_id AS 'hotsId',
 			b.channel,
 			b.nickname,
 			b.country,
@@ -50,7 +52,7 @@
 			b.`is_match` AS 'isMatch',
 			d1.`label` AS 'isMatchs'
 		FROM `a_hot` a
-		LEFT JOIN `a_hot_basic` b ON b.`hot_id` = a.`id` AND b.`del_flag` = 0
+		JOIN `a_hot_basic` b ON b.`hot_id` = a.`id` AND b.`del_flag` = 0
 		LEFT JOIN `a_hot_coop` c ON c.`hotb_id` = b.`id` AND c.`del_flag` = 0
 		LEFT JOIN `a_hot_coop_product` c1 ON c1.`coop_id` = c.`id` AND c1.`del_flag` = 0
 		LEFT JOIN `sys_dict` d ON d.`value` = a.`state` AND d.`type` = 'hot_coop_state' AND d.`del_flag` = 0
@@ -120,6 +122,8 @@
 	<update id="state" parameterType="com.hot.modules.hot.entity.Hot">
 		UPDATE `a_hot` SET
 			`state` = #{state},
+			`dead_date` = #{deadDate},
+			`reason` = #{reason},
 			`update_user` = #{updateUser},
 			`update_time` = NOW()
 		WHERE id = #{id}
@@ -206,5 +210,82 @@
 			`update_time` = NOW()
 		WHERE id = #{id}
 	</update>
+
+	<select id="invit" resultType="com.hot.modules.hot.entity.HotInvit">
+		SELECT
+			a.id,
+			a.doc_num AS 'docNum',
+			a.bd_name AS 'bdName',
+			a.conn_time AS 'connTime',
+			a.agcc_time AS 'agccTime',
+			a.hots_id AS 'hotsId',
+			a.channel,
+			a.country,
+			a.state,
+			d.label AS 'states'
+		FROM `a_hot_invit` a
+		LEFT JOIN `sys_dict` d ON d.value = a.state AND d.type = 'hot_states' AND d.del_flag = 0
+		WHERE a.`del_flag` = 0
+		<if test="sdate != null and sdate !=''">
+			AND a.`conn_time` >= #{sdate}
+		</if>
+		  <if test="edate != null and edate !=''">
+			AND a.`conn_time` &lt;= #{edate}
+		</if>
+		<if test="country != null and country != ''">
+			AND a.`country` LIKE CONCAT('%',#{country},'%')
+		</if>
+		<if test="bdName != null and bdName != ''">
+			AND a.`bd_name` LIKE CONCAT('%',#{bdName},'%')
+		</if>
+		<if test="state != null and state != ''">
+			AND a.`state` = #{state}
+		</if>
+		<if test="channel != null and channel != ''">
+			AND a.`channel` = #{channel}
+		</if>
+		<if test="hotsId != null and hotsId != ''">
+			AND a.`hots_id` LIKE CONCAT('%',#{hotsId},'%')
+		</if>
+	</select>
+
+	<select id="coop" resultType="com.hot.modules.hot.entity.HotCoop">
+		SELECT
+			a.id,
+			a.doc_num AS 'docNum',
+			a.bd_name AS 'bdName',
+			a.hots_id AS 'hotsId',
+			a.channel,
+			b.product_model AS 'productModel',
+			b.product_color AS 'productColor',
+			a.state,
+			d.label AS 'states'
+		FROM a_hot_coop a
+		LEFT JOIN `a_hot_coop_product` b ON b.`coop_id` = a.`id` AND b.`del_flag` = 0
+		LEFT JOIN `sys_dict` d ON d.value = a.state AND d.type = 'hot_states' AND d.del_flag = 0
+		WHERE a.del_flag = 0
+		<if test="sdate != null and sdate !=''">
+			AND a.`create_time` >= #{sdate}
+		</if>
+		<if test="edate != null and edate !=''">
+			AND a.`create_time` &lt;= #{edate}
+		</if>
+		<if test="country != null and country != ''">
+			AND a.`country` LIKE CONCAT('%',#{country},'%')
+		</if>
+		<if test="bdName != null and bdName != ''">
+			AND a.`bd_name` LIKE CONCAT('%',#{bdName},'%')
+		</if>
+		<if test="state != null and state != ''">
+			AND a.`state` = #{state}
+		</if>
+		<if test="channel != null and channel != ''">
+			AND a.`channel` = #{channel}
+		</if>
+		<if test="hotsId != null and hotsId != ''">
+			AND a.`hots_id` LIKE CONCAT('%',#{hotsId},'%')
+		</if>
+	</select>
+
 
 </mapper>

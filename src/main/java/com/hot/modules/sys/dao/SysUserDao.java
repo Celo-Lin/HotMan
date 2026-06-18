@@ -19,6 +19,22 @@ public interface SysUserDao {
 
 	int delete(SysUser sysUser);
 
+	void deleteButt(SysUser user);
+
+	void insertButt(SysUser user);
+
+	void deleteData(SysUser user);
+
+	void insertData(SysUser user);
+
+	void deleteMenu(SysUser user);
+
+	void insertMenu(SysUser user);
+
+	void deleteModu(SysUser user);
+
+	void insertModu(SysUser user);
+
 	SysUser getByLoginname(@Param("loginname")String loginname);
 
 	void updateError(SysUser sysUser);

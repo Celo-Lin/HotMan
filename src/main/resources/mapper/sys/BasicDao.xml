@@ -15,7 +15,7 @@
 	</select>
 
 	<select id="menu" resultType="com.hot.modules.sys.entity.SysMenu">
-		CALL basic_menu(#{userid},#{type});
+		CALL basic_menu(#{userid});
 	</select>
 
 	<resultMap id="moduMap" type="com.hot.modules.sys.entity.SysMenu">
@@ -40,7 +40,7 @@
 	</resultMap>
 
 	<select id="modu" resultMap="moduMap">
-		CALL basic_modu(#{userid},#{type});
+		CALL basic_modu(#{userid});
 	</select>
 
 	<resultMap id="buttMap" type="com.hot.modules.sys.entity.SysMenu">
@@ -63,7 +63,20 @@
 	</resultMap>
 
 	<select id="butt" resultMap="buttMap">
-		CALL basic_butt(#{userid},#{type});
+		CALL basic_butt(#{userid});
+	</select>
+
+	<select id="product" resultType="com.hot.modules.hot.entity.Product">
+		SELECT
+			id,
+			erp_code AS erpCode,
+			`name`,
+			model,
+			color,
+			create_time AS createTime,
+			update_time AS updateTime
+		FROM `a_product`
+		WHERE del_flag = 0
 	</select>
 
 </mapper>

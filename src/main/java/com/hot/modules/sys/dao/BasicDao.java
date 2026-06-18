@@ -1,9 +1,7 @@
 package com.hot.modules.sys.dao;
 
-import com.hot.modules.sys.entity.BasicData;
-import com.hot.modules.sys.entity.BasicTree;
-import com.hot.modules.sys.entity.SysMenu;
-import com.hot.modules.sys.entity.SysUser;
+import com.hot.modules.hot.entity.Product;
+import com.hot.modules.sys.entity.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -19,10 +17,13 @@ public interface BasicDao {
 
     SysUser user(@Param("id") String id);
 
-    List<SysMenu> menu(@Param("userid") String userid, @Param("type") int type);
+    List<SysMenu> menu(@Param("userid") String userid);
 
-    List<SysMenu> modu(@Param("userid") String userid, @Param("type") int type);
+    List<SysMenu> modu(@Param("userid") String userid);
 
-    List<SysMenu> butt(@Param("userid") String userid, @Param("type") int type);
+    List<SysMenu> butt(@Param("userid") String userid);
 
+    List<Product> product(Product product);
+
+    List<SysField> field(@Param("userid")String userid);
 }

@@ -2,6 +2,8 @@ package com.hot.modules.hot.dao;
 
 import com.hot.modules.hot.entity.Hot;
 import com.hot.modules.hot.entity.HotBasic;
+import com.hot.modules.hot.entity.HotCoop;
+import com.hot.modules.hot.entity.HotInvit;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -24,9 +26,13 @@ public interface HotDao {
 
     HotBasic getBasic(@Param("hotsId")String hotsId, @Param("channel")String channel);
 
-    void insertBasicList(@Param("id") Integer id, @Param("list")List<HotBasic> list);
+    int insertBasicList(@Param("id") Integer id, @Param("list")List<HotBasic> list);
 
-    void updateBasic(HotBasic basictk);
+    int updateBasic(HotBasic basic);
+
+    List<HotInvit> invit(HotInvit invit);
+
+    List<HotCoop> coop(HotCoop coop);
 
 
 }
