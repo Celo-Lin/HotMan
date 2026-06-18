@@ -79,4 +79,8 @@
 		WHERE del_flag = 0
 	</select>
 
+	<select id="field" resultType="com.hot.modules.sys.entity.SysField">
+		CALL basic_field(#{userid});
+	</select>
+
 </mapper>
