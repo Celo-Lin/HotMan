@@ -7,6 +7,7 @@ import com.hot.common.result.ResultCode;
 import com.hot.modules.sys.entity.SysUser;
 import com.hot.modules.sys.service.SysUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -36,6 +37,11 @@ public class MyInterceptor implements HandlerInterceptor {
                              HttpServletResponse response,
                              Object handler) throws Exception {
         log.debug("intercept {} {}", request.getMethod(), request.getRequestURI());
+
+        // CORS 预检请求（OPTIONS）不带业务令牌，直接放行，交给 CORS 处理，否则会被当成未登录拦掉导致前端报跨域
+        if (HttpMethod.OPTIONS.matches(request.getMethod())) {
+            return true;
+        }
 
         String token = request.getHeader(AuthConstant.TOKEN_HEADER);
         if (!StringUtils.hasText(token)) {

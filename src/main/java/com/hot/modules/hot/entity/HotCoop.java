@@ -42,7 +42,6 @@ public class HotCoop extends BaseEntity {
     private String productColor;     // 产品颜色
 
     private List<HotCoopProduct> prodList;
-    private List<HotCoopSett> settList;
-    private List<HotCoopData> dataList;
+
 
 }

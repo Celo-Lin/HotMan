@@ -8,27 +8,30 @@
 		    b.amount
 		FROM (
 			SELECT
-				COUNT(b.id) AS 'num'
+				COUNT(c.id) AS 'num'
 			FROM `a_hot_coop_data` a
-			LEFT JOIN `a_hot_coop` b ON b.id = a.coop_id
-			WHERE a.del_flag = 0 AND b.del_flag = 0 AND YEAR(a.rele_time) = #{date}
+			LEFT JOIN `a_hot_coop_product` b ON b.id = a.coop_id
+			LEFT JOIN `a_hot_coop` c ON c.id = b.coop_id
+			WHERE a.del_flag = 0 AND b.del_flag = 0 AND c.del_flag = 0 AND YEAR(a.rele_time) = #{date}
 		) a JOIN (
 			SELECT
-				IFNULL(SUM(amount),0) AS 'amount'
+				IFNULL(SUM(a.amount),0) AS 'amount'
 			FROM `a_hot_coop_data` a
-			LEFT JOIN `a_hot_coop` b ON b.id = a.coop_id
-			WHERE a.del_flag = 0 AND b.del_flag = 0 AND YEAR(a.rele_time) = #{date}
+			LEFT JOIN `a_hot_coop_product` b ON b.id = a.coop_id
+			LEFT JOIN `a_hot_coop` c ON c.id = b.coop_id
+		WHERE a.del_flag = 0 AND b.del_flag = 0 AND c.del_flag = 0 AND YEAR(a.rele_time) = #{date}
 		) b ON 1=1
 	</select>
 
 	<select id="cotry" resultType="java.util.Map">
 		SELECT
-			b.country,
+			c.country,
 			SUM(a.id) AS 'num'
 		FROM `a_hot_coop_data` a
-		LEFT JOIN `a_hot_coop` b ON b.id = a.coop_id
-		WHERE a.del_flag = 0 AND b.del_flag = 0 AND YEAR(a.`rele_time`) = #{date}
-		GROUP BY b.country
+		LEFT JOIN `a_hot_coop_product` b ON b.id = a.coop_id
+		LEFT JOIN `a_hot_coop` c ON c.id = b.coop_id
+		WHERE a.del_flag = 0 AND b.del_flag = 0 AND c.del_flag = 0 AND YEAR(a.`rele_time`) = #{date}
+		GROUP BY c.country
 	</select>
 
 	<select id="trend" resultType="java.util.Map">
@@ -48,28 +51,31 @@
 				ROUND((SUM(a.likes)+SUM(a.comments)+SUM(a.shares)+SUM(a.favors))/SUM(a.views),4) AS 'intr', -- 互动率=(点赞+评论+分享+收藏)/观看量，每个变量是统计内容里对应的数据之和
 				SUM(a.spend) AS 'spend' -- 本年度投流总花费：内容发布时间的维度统计内容的广告消耗金额之和
 			FROM a_hot_coop_data a
-			LEFT JOIN `a_hot_coop` b ON b.id = a.coop_id
-			WHERE a.del_flag = 0 AND b.del_flag = 0 AND YEAR(a.rele_time) = #{date}
+			LEFT JOIN `a_hot_coop_product` b ON b.id = a.coop_id
+			LEFT JOIN `a_hot_coop` c ON c.id = b.coop_id
+			WHERE a.del_flag = 0 AND b.del_flag = 0 AND c.del_flag = 0 AND YEAR(a.rele_time) = #{date}
 			<if test="country != null and country != ''">
-				AND b.`country` = #{country}
+				AND c.`country` = #{country}
 			</if>
 		) a LEFT JOIN (
 			SELECT
-				SUM(amount) AS 'amount'  -- 本年度红人总花费：按照合作单里的付款时间所属年度下对应的付款金额统计
+				SUM(a.amount) AS 'amount'  -- 本年度红人总花费：按照合作单里的付款时间所属年度下对应的付款金额统计
 			FROM `a_hot_coop_data` a
-			LEFT JOIN `a_hot_coop` b ON b.id = a.coop_id
-			WHERE a.del_flag = 0 AND b.del_flag = 0 AND YEAR(a.pay_time) = #{date}
+			LEFT JOIN `a_hot_coop_product` b ON b.id = a.coop_id
+			LEFT JOIN `a_hot_coop` c ON c.id = b.coop_id
+			WHERE a.del_flag = 0 AND b.del_flag = 0 AND c.del_flag = 0 AND YEAR(a.pay_time) = #{date}
 			<if test="country != null and country != ''">
-				AND b.`country` = #{country}
+				AND c.`country` = #{country}
 			</if>
 		) b ON 1=1 LEFT JOIN (
 			SELECT
-				SUM(gmv) AS 'gmv'
+				SUM(a.gmv) AS 'gmv'
 			FROM `a_hot_coop_product` a
-			LEFT JOIN `a_hot_coop` b ON b.id = a.coop_id
-			WHERE a.del_flag = 0 AND b.del_flag = 0 AND YEAR(a.sales_period) = #{date}
+			LEFT JOIN `a_hot_coop_product` b ON b.id = a.coop_id
+			LEFT JOIN `a_hot_coop` c ON c.id = b.coop_id
+			WHERE a.del_flag = 0 AND b.del_flag = 0 AND c.del_flag = 0 AND YEAR(a.sales_period) = #{date}
 			<if test="country != null and country != ''">
-				AND b.`country` = #{country}
+				AND c.`country` = #{country}
 			</if>
 		) c ON 1=1
 	</select>

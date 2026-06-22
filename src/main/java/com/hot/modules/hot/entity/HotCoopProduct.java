@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.hot.common.entity.BaseEntity;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 产品合作信息表
  */
@@ -39,5 +41,8 @@ public class HotCoopProduct extends BaseEntity {
     private String disCode;          // 折扣代码
     private String gmv;              // GMV
     private String roas;             // ROAS
+
+    private List<HotCoopSett> settList;
+    private List<HotCoopData> dataList;
 
 }

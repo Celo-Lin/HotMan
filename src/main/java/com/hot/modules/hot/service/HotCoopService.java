@@ -35,32 +35,38 @@ public class HotCoopService {
         if (prodList != null && prodList.size() > 0) {
             for (HotCoopProduct prod : prodList) {
                 prod.setCoopId(id);
+                prod.setCreateUser(coop.getCreateUser());
+                prod.setUpdateUser(coop.getUpdateUser());
                 if (prod.getId() == null) {
                     coopDao.insertProduct(prod);
                 } else {
                     coopDao.updateProduct(prod);
                 }
-            }
-        }
-        List<HotCoopSett> settList = coop.getSettList();
-        if (settList != null && settList.size() > 0) {
-            for (HotCoopSett sett : settList) {
-                sett.setCoopId(id);
-                if (sett.getId() == null) {
-                    coopDao.insertSett(sett);
-                } else {
-                    coopDao.updateSett(sett);
+                List<HotCoopSett> settList = prod.getSettList();
+                if (settList != null && settList.size() > 0) {
+                    for (HotCoopSett sett : settList) {
+                        sett.setCoopId(prod.getId());
+                        sett.setCreateUser(coop.getCreateUser());
+                        sett.setUpdateUser(coop.getUpdateUser());
+                        if (sett.getId() == null) {
+                            coopDao.insertSett(sett);
+                        } else {
+                            coopDao.updateSett(sett);
+                        }
+                    }
                 }
-            }
-        }
-        List<HotCoopData> dataList = coop.getDataList();
-        if (dataList != null && dataList.size() > 0) {
-            for (HotCoopData data : dataList) {
-                data.setCoopId(id);
-                if (data.getId() == null) {
-                    coopDao.insertData(data);
-                } else {
-                    coopDao.updateData(data);
+                List<HotCoopData> dataList = prod.getDataList();
+                if (dataList != null && dataList.size() > 0) {
+                    for (HotCoopData data : dataList) {
+                        data.setCoopId(prod.getId());
+                        data.setCreateUser(coop.getCreateUser());
+                        data.setUpdateUser(coop.getUpdateUser());
+                        if (data.getId() == null) {
+                            coopDao.insertData(data);
+                        } else {
+                            coopDao.updateData(data);
+                        }
+                    }
                 }
             }
         }

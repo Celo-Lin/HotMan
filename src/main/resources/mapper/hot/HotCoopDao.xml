@@ -40,48 +40,48 @@
 			<result property="disCode" column="prod.disCode"/>
 			<result property="gmv" column="prod.gmv"/>
 			<result property="roas" column="prod.roas"/>
-		</collection>
-		<collection property="settList" ofType="com.hot.modules.hot.entity.HotCoopSett">
-			<id property="id" column="sett.id"/>
-			<result property="applyTime" column="sett.applyTime"/>
-			<result property="payTime" column="sett.payTime"/>
-			<result property="payAmount" column="sett.payAmount"/>
-		</collection>
-		<collection property="dataList" ofType="com.hot.modules.hot.entity.HotCoopData">
-			<id property="id" column="data.id"/>
-			<result property="releChan" column="data.releChan"/>
-			<result property="releAcct" column="data.releAcct"/>
-			<result property="amount" column="data.amount"/>
-			<result property="applyTime" column="data.applyTime"/>
-			<result property="payTime" column="sett.payTime"/>
-			<result property="relesDate" column="data.relesDate"/>
-			<result property="vidType" column="data.vidType"/>
-			<result property="vidDraftUrl" column="data.vidDraftUrl"/>
-			<result property="mateName" column="data.mateName"/>
-			<result property="proDraftTime" column="data.proDraftTime"/>
-			<result property="releTime" column="data.releTime"/>
-			<result property="onlineUrl" column="data.onlineUrl"/>
-			<result property="adCode" column="data.adCode"/>
-			<result property="adCodeExpiry" column="data.adCodeExpiry"/>
-			<result property="duration" column="data.duration"/>
-			<result property="creativ" column="data.creativ"/>
-			<result property="score" column="data.score"/>
-			<result property="scoreLevel" column="data.scoreLevel"/>
-			<result property="views" column="data.views"/>
-			<result property="likes" column="data.likes"/>
-			<result property="comments" column="data.comments"/>
-			<result property="shares" column="data.shares"/>
-			<result property="favors" column="data.favors"/>
-			<result property="rateNox" column="data.rateNox"/>
-			<result property="dljClicks" column="data.dljClicks"/>
-			<result property="cpm" column="data.cpm"/>
-			<result property="cpc" column="data.cpc"/>
-			<result property="period" column="data.period"/>
-			<result property="spend" column="data.spend"/>
-			<result property="plays" column="data.plays"/>
-			<result property="clicks" column="data.clicks"/>
-			<result property="conve" column="data.conve"/>
-			<result property="roas" column="data.roas"/>
+			<collection property="settList" ofType="com.hot.modules.hot.entity.HotCoopSett">
+				<id property="id" column="sett.id"/>
+				<result property="applyTime" column="sett.applyTime"/>
+				<result property="payTime" column="sett.payTime"/>
+				<result property="payAmount" column="sett.payAmount"/>
+			</collection>
+			<collection property="dataList" ofType="com.hot.modules.hot.entity.HotCoopData">
+				<id property="id" column="data.id"/>
+				<result property="releChan" column="data.releChan"/>
+				<result property="releAcct" column="data.releAcct"/>
+				<result property="amount" column="data.amount"/>
+				<result property="applyTime" column="data.applyTime"/>
+				<result property="payTime" column="sett.payTime"/>
+				<result property="relesDate" column="data.relesDate"/>
+				<result property="vidType" column="data.vidType"/>
+				<result property="vidDraftUrl" column="data.vidDraftUrl"/>
+				<result property="mateName" column="data.mateName"/>
+				<result property="proDraftTime" column="data.proDraftTime"/>
+				<result property="releTime" column="data.releTime"/>
+				<result property="onlineUrl" column="data.onlineUrl"/>
+				<result property="adCode" column="data.adCode"/>
+				<result property="adCodeExpiry" column="data.adCodeExpiry"/>
+				<result property="duration" column="data.duration"/>
+				<result property="creativ" column="data.creativ"/>
+				<result property="score" column="data.score"/>
+				<result property="scoreLevel" column="data.scoreLevel"/>
+				<result property="views" column="data.views"/>
+				<result property="likes" column="data.likes"/>
+				<result property="comments" column="data.comments"/>
+				<result property="shares" column="data.shares"/>
+				<result property="favors" column="data.favors"/>
+				<result property="rateNox" column="data.rateNox"/>
+				<result property="dljClicks" column="data.dljClicks"/>
+				<result property="cpm" column="data.cpm"/>
+				<result property="cpc" column="data.cpc"/>
+				<result property="period" column="data.period"/>
+				<result property="spend" column="data.spend"/>
+				<result property="plays" column="data.plays"/>
+				<result property="clicks" column="data.clicks"/>
+				<result property="conve" column="data.conve"/>
+				<result property="roas" column="data.roas"/>
+			</collection>
 		</collection>
 	</resultMap>
 
@@ -163,8 +163,8 @@
 			d.pay_amount AS 'sett.payAmount'
 		FROM `a_hot_coop` a
 		LEFT JOIN `a_hot_coop_product` b ON b.`coop_id` = a.`id` AND b.`del_flag` = 0
-		LEFT JOIN `a_hot_coop_data` c ON c.`coop_id` = a.`id` AND c.`del_flag` = 0
-		LEFT JOIN `a_hot_coop_sett` d ON d.`coop_id` = a.`id` AND c.`del_flag` = 0
+		LEFT JOIN `a_hot_coop_data` c ON c.`coop_id` = b.`id` AND c.`del_flag` = 0
+		LEFT JOIN `a_hot_coop_sett` d ON d.`coop_id` = b.`id` AND d.`del_flag` = 0
 		WHERE a.id = #{id}
 	</select>
 
@@ -326,14 +326,42 @@
 			#{releChan},
 			#{releAcct},
 			#{amount},
-			#{applyTime},
-			#{payTime},
+			<choose>
+				<when test="applyTime !=null and applyTime !=''">
+					#{applyTime},
+				</when>
+				<otherwise>
+					NULL,
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="payTime !=null and payTime !=''">
+					#{payTime},
+				</when>
+				<otherwise>
+					NULL,
+				</otherwise>
+			</choose>
 			#{relesDate},
 			#{vidType},
 			#{vidDraftUrl},
 			#{mateName},
-			#{proDraftTime},
-			#{releTime},
+			<choose>
+				<when test="proDraftTime !=null and proDraftTime !=''">
+					#{proDraftTime},
+				</when>
+				<otherwise>
+					NULL,
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="releTime !=null and releTime !=''">
+					#{releTime},
+				</when>
+				<otherwise>
+					NULL,
+				</otherwise>
+			</choose>
 			#{onlineUrl},
 			#{adCode},
 			#{adCodeExpiry},
@@ -368,14 +396,42 @@
 			`rele_chan` = #{releChan},
 			`rele_acct` = #{releAcct},
 			`amount` = #{amount},
-			`apply_time` = #{applyTime},
-			`pay_time` = #{payTime},
+			<choose>
+				<when test="applyTime !=null and applyTime !=''">
+					`apply_time` = #{applyTime},
+				</when>
+				<otherwise>
+					`apply_time` = NULL,
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="payTime !=null and payTime !=''">
+					`pay_time` = #{payTime},
+				</when>
+				<otherwise>
+					`pay_time` = NULL,
+				</otherwise>
+			</choose>
 			`reles_date` = #{relesDate},
 			`vid_type` = #{vidType},
 			`vid_draft_url` = #{vidDraftUrl},
 			`mate_name` = #{mateName},
-			`pro_draft_time` = #{proDraftTime},
-			`rele_time` = #{releTime},
+			<choose>
+				<when test="proDraftTime !=null and proDraftTime !=''">
+					`pro_draft_time` = #{proDraftTime},
+				</when>
+				<otherwise>
+					`pro_draft_time` = NULL,
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="releTime !=null and releTime !=''">
+					`rele_time` = #{releTime},
+				</when>
+				<otherwise>
+					`rele_time` = NULL,
+				</otherwise>
+			</choose>
 			`online_url` = #{onlineUrl},
 			`ad_code` = #{adCode},
 			`ad_code_expiry` = #{adCodeExpiry},
@@ -455,9 +511,23 @@
 			#{coopFee},
 			#{sashNo},
 			#{carrier},
-			#{sashTime},
+			<choose>
+				<when test="sashTime !=null and sashTime !=''">
+					#{sashTime},
+				</when>
+				<otherwise>
+					NULL,
+				</otherwise>
+			</choose>
 			#{wlStatus},
-			#{dhDate},
+			<choose>
+				<when test="dhDate !=null and dhDate !=''">
+					#{dhDate},
+				</when>
+				<otherwise>
+					NULL,
+				</otherwise>
+			</choose>
 			#{utmUrl},
 			#{salesPeriod},
 			#{clicks},
@@ -490,9 +560,23 @@
 			`coop_fee` = #{coopFee},
 			`sash_no` = #{sashNo},
 			`carrier` = #{carrier},
-			`sash_time` = #{sashTime},
+			<choose>
+				<when test="sashTime !=null and sashTime !=''">
+					`sash_time` = #{sashTime},
+				</when>
+				<otherwise>
+					`sash_time` = NULL,
+				</otherwise>
+			</choose>
 			`wl_status` = #{wlStatus},
-			`dh_date` = #{dhDate},
+			<choose>
+				<when test="dhDate !=null and dhDate !=''">
+					`dh_date` = #{dhDate},
+				</when>
+				<otherwise>
+					`dh_date` = NULL,
+				</otherwise>
+			</choose>
 			`utm_url` = #{utmUrl},
 			`sales_period` = #{salesPeriod},
 			`clicks` = #{clicks},
