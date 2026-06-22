@@ -58,5 +58,15 @@
             <appender-ref ref="ROLLING"/>
         </root>
     </springProfile>
+    <springProfile name="test">
+        <logger name="com.hot.modules" level="DEBUG" additivity="false">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="MYBATIS_ROLLING"/>
+        </logger>
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="ROLLING"/>
+        </root>
+    </springProfile>
 
 </configuration>
