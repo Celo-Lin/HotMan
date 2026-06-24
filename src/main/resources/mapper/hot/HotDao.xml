@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hot.modules.hot.dao.HotDao">
+
+	<select id="get" resultType="com.hot.modules.hot.entity.Hot">
+		SELECT
+			id,
+			`name`,
+			arch_name AS 'archName',
+			state,
+			create_time AS 'createTime'
+		FROM `a_hot`
+		WHERE id = #{id}
+	</select>
+
+	<select id="getBasicList" resultType="com.hot.modules.hot.entity.HotBasic">
+		SELECT
+			id,
+			hots_id AS 'hotsId',
+			channel,
+			nickname,
+			country,
+			contact,
+			hot_level AS 'hotLevel',
+			hot_type AS 'hotType',
+			follower,
+			juxing_url AS 'juxingUrl',
+			url_link AS 'urlLink',
+			avg_play_count AS 'avgPlayCount',
+			avg_iact_rate AS 'avgIactRate',
+			long_avg_views AS 'longAvgViews',
+			long_iact_rate AS 'longIactRate',
+			short_avg_views AS 'shortAvgViews',
+			short_iact_rate AS 'shortIactRate',
+			score_level AS 'scoreLevel'
+		 FROM `a_hot_basic`
+		 WHERE del_flag = 0 AND hot_id = #{hotId}
+	</select>
+
+	<select id="list" resultType="com.hot.modules.hot.entity.Hot">
+		SELECT
+			a.state,
+			d.`label` AS 'states',
+			a.create_time AS 'createTime',
+			b.id AS 'id',
+			b.hots_id AS 'hotsId',
+			b.channel,
+			b.nickname,
+			b.country,
+			b.contact,
+			b.avg_play_count AS 'avgPlayCount',
+			b.score_level AS 'scoreLevel',
+			b.`is_match` AS 'isMatch',
+			d1.`label` AS 'isMatchs'
+		FROM `a_hot` a
+		JOIN `a_hot_basic` b ON b.`hot_id` = a.`id` AND b.`del_flag` = 0
+		LEFT JOIN `a_hot_coop` c ON c.`hotb_id` = b.`id` AND c.`del_flag` = 0
+		LEFT JOIN `a_hot_coop_product` c1 ON c1.`coop_id` = c.`id` AND c1.`del_flag` = 0
+		LEFT JOIN `sys_dict` d ON d.`value` = a.`state` AND d.`type` = 'hot_coop_state' AND d.`del_flag` = 0
+		LEFT JOIN `sys_dict` d1 ON d1.`value` = b.`is_match` AND d1.`type` = 'is_match' AND d1.`del_flag` = 0
+		<where>
+			<if test="country != null and country != ''">
+				AND b.`country` LIKE CONCAT('%',#{country},'%')
+			</if>
+			<if test="hotLevel != null and hotLevel != ''">
+				AND b.`hot_level` LIKE CONCAT('%',#{hotLevel},'%')
+			</if>
+			<if test="hotType != null and hotType != ''">
+				AND b.`hot_type` LIKE CONCAT('%',#{hotType},'%')
+			</if>
+			<if test="channel != null and channel !=''">
+				AND b.`channel` = #{channel}
+			</if>
+			<if test="hotsId != null and hotsId != ''">
+				AND b.`hots_id` LIKE CONCAT('%',#{hotsId},'%')
+			</if>
+			<if test="isMatch != null and isMatch !=''">
+				AND b.`is_match` = #{isMatch}
+			</if>
+			<if test="state != null and state !=''">
+				AND a.`state` = #{state}
+			</if>
+			<if test="productName != null and productName != ''">
+				AND c1.`product_name` LIKE CONCAT('%',#{productName},'%')
+			</if>
+			<if test="coopFee != null and coopFee !=''">
+				AND c1.`coop_fee` &lt;= #{coopFee}
+			</if>
+		</where>
+		GROUP BY b.`id` ORDER BY a.create_time DESC
+	</select>
+
+	<insert id="insert" parameterType="com.hot.modules.hot.entity.Hot" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO `a_hot` (
+			`name`,
+			`arch_name`,
+			`state`,
+			`create_user`,
+			`create_time`,
+			`update_user`,
+			`update_time`
+		) VALUES (
+			#{name},
+			#{archName},
+			#{state},
+			#{createUser},
+			NOW(),
+			#{updateUser},
+			NOW()
+		)
+	</insert>
+
+	<update id="update" parameterType="com.hot.modules.hot.entity.Hot">
+		UPDATE `a_hot` SET
+			`name` = #{name},
+			`arch_name` = #{archName},
+			`state` = #{state},
+			`update_user` = #{updateUser},
+			`update_time` = NOW()
+		WHERE id = #{id}
+	</update>
+
+	<update id="state" parameterType="com.hot.modules.hot.entity.Hot">
+		UPDATE `a_hot` SET
+			`state` = #{state},
+			<if test="deadDate != null and deadDate != ''">
+				`dead_date` = #{deadDate},
+			</if>
+			`reason` = #{reason},
+			`update_user` = #{updateUser},
+			`update_time` = NOW()
+		WHERE id = #{id}
+	</update>
+
+	<select id="getBasic" resultType="com.hot.modules.hot.entity.HotBasic">
+		SELECT
+			id,
+			hot_id AS 'hotId',
+			hots_id AS 'hotsId'
+		FROM `a_hot_basic`
+		WHERE del_flag = 0 AND hots_id = #{hotsId} AND channel = #{channel} LIMIT 1
+	</select>
+
+	<insert id="insertBasicList">
+		INSERT INTO `a_hot_basic` (
+			`hot_id`,
+			`channel`,
+			`hots_id`,
+			`nickname`,
+			`country`,
+			`contact`,
+			`hot_level`,
+			`hot_type`,
+			`follower`,
+			`juxing_url`,
+			`url_link`,
+			`avg_play_count`,
+			`avg_iact_rate`,
+			`long_avg_views`,
+			`long_iact_rate`,
+			`short_avg_views`,
+			`short_iact_rate`,
+			`score_level`,
+			`create_user`,
+			`create_time`,
+			`update_user`,
+			`update_time`
+		) VALUES
+		<foreach collection="list" item="item" separator=",">
+			(
+				#{id},
+				#{item.channel},
+				#{item.hotsId},
+				#{item.nickname},
+				#{item.country},
+				#{item.contact},
+				#{item.hotLevel},
+				#{item.hotType},
+				#{item.follower},
+				#{item.juxingUrl},
+				#{item.urlLink},
+				#{item.avgPlayCount},
+				#{item.avgIactRate},
+				#{item.longAvgViews},
+				#{item.longIactRate},
+				#{item.shortAvgViews},
+			  	#{item.shortIactRate},
+				#{item.scoreLevel},
+				#{item.createUser},
+				NOW(),
+				#{item.updateUser},
+				NOW()
+			)
+		</foreach>
+	</insert>
+
+	<update id="updateBasic">
+		UPDATE `a_hot_basic` SET
+			`hots_id` = #{hotsId},
+			`nickname` = #{nickname},
+			`country` = #{country},
+			`contact` = #{contact},
+			`hot_level` = #{hotLevel},
+			`hot_type` = #{hotType},
+			`follower` = #{follower},
+			`juxing_url` = #{juxingUrl},
+			`url_link` = #{urlLink},
+			`avg_play_count` = #{avgPlayCount},
+			`avg_iact_rate` = #{avgIactRate},
+			`long_avg_views` = #{longAvgViews},
+			`long_iact_rate` = #{longIactRate},
+			`short_avg_views` = #{shortAvgViews},
+			`short_iact_rate` = #{shortIactRate},
+			`score_level` = #{scoreLevel},
+			`update_user` = #{updateUser},
+			`update_time` = NOW()
+		WHERE id = #{id}
+	</update>
+
+	<select id="invit" resultType="com.hot.modules.hot.entity.HotInvit">
+		SELECT
+			a.id,
+			a.doc_num AS 'docNum',
+			a.bd_name AS 'bdName',
+			a.conn_time AS 'connTime',
+			a.agcc_time AS 'agccTime',
+			a.hots_id AS 'hotsId',
+			a.channel,
+			a.country,
+			a.state,
+			d.label AS 'states'
+		FROM `a_hot_invit` a
+		LEFT JOIN `sys_dict` d ON d.value = a.state AND d.type = 'hot_states' AND d.del_flag = 0
+		WHERE a.`del_flag` = 0
+		<if test="sdate != null and sdate !=''">
+			AND a.`conn_time` >= #{sdate}
+		</if>
+		  <if test="edate != null and edate !=''">
+			AND a.`conn_time` &lt;= #{edate}
+		</if>
+		<if test="country != null and country != ''">
+			AND a.`country` LIKE CONCAT('%',#{country},'%')
+		</if>
+		<if test="bdName != null and bdName != ''">
+			AND a.`bd_name` LIKE CONCAT('%',#{bdName},'%')
+		</if>
+		<if test="state != null and state != ''">
+			AND a.`state` = #{state}
+		</if>
+		<if test="channel != null and channel != ''">
+			AND a.`channel` = #{channel}
+		</if>
+		<if test="hotsId != null and hotsId != ''">
+			AND a.`hots_id` LIKE CONCAT('%',#{hotsId},'%')
+		</if>
+	</select>
+
+	<select id="coop" resultType="com.hot.modules.hot.entity.HotCoop">
+		SELECT
+			a.id,
+			a.doc_num AS 'docNum',
+			a.bd_name AS 'bdName',
+			a.hots_id AS 'hotsId',
+			a.channel,
+			b.product_model AS 'productModel',
+			b.product_color AS 'productColor',
+			a.state,
+			d.label AS 'states'
+		FROM a_hot_coop a
+		LEFT JOIN `a_hot_coop_product` b ON b.`coop_id` = a.`id` AND b.`del_flag` = 0
+		LEFT JOIN `sys_dict` d ON d.value = a.state AND d.type = 'hot_states' AND d.del_flag = 0
+		WHERE a.del_flag = 0
+		<if test="sdate != null and sdate !=''">
+			AND a.`create_time` >= #{sdate}
+		</if>
+		<if test="edate != null and edate !=''">
+			AND a.`create_time` &lt;= #{edate}
+		</if>
+		<if test="country != null and country != ''">
+			AND a.`country` LIKE CONCAT('%',#{country},'%')
+		</if>
+		<if test="bdName != null and bdName != ''">
+			AND a.`bd_name` LIKE CONCAT('%',#{bdName},'%')
+		</if>
+		<if test="state != null and state != ''">
+			AND a.`state` = #{state}
+		</if>
+		<if test="channel != null and channel != ''">
+			AND a.`channel` = #{channel}
+		</if>
+		<if test="hotsId != null and hotsId != ''">
+			AND a.`hots_id` LIKE CONCAT('%',#{hotsId},'%')
+		</if>
+	</select>
+
+
+</mapper>
