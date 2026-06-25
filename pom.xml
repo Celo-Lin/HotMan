@@ -12,7 +12,7 @@
 	<groupId>com.hot</groupId>
 	<artifactId>hot</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>hot</name>
 
 	<properties>
@@ -80,8 +80,9 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
+			<version>33.6.0-jre</version>
 		</dependency>
+		<!-- Source: https://mvnrepository.com/artifact/com.google.guava/guava -->
 		<!-- Apache HttpClient 4.x（org.apache.http.*），版本由 Spring Boot 父 POM 托管 -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

@@ -1,0 +1,30 @@
+# Compiled files
+*.class
+*.jar
+*.war
+
+# IDE 文件
+.idea/
+*.iml
+.settings/
+.project
+.classpath
+
+# Log files
+*.log
+
+# OS 生成文件
+.DS_Store
+Thumbs.db
+
+# Maven 生成的目录
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+
+# Application 配置文件（包含敏感信息）
+application.yml
+application-*.yml
+application-*.yaml
+application-*.properties
