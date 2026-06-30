@@ -15,6 +15,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 登录拦截器：校验请求头中的令牌，未登录或令牌失效则返回 401。
@@ -26,6 +28,12 @@ public class MyInterceptor implements HandlerInterceptor {
     private final SysUserService sysUserService;
 
     private final ObjectMapper objectMapper;
+
+    // 白名单路径（不需要 token 校验）
+    private static final List<String> WHITE_LIST = Arrays.asList(
+            "/material/queryBatch",
+            "/material/queryBatch/erp"  // 如果有多个路径，都加上
+    );
 
     public MyInterceptor(SysUserService sysUserService, ObjectMapper objectMapper) {
         this.sysUserService = sysUserService;

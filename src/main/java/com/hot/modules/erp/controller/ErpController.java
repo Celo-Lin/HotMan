@@ -6,6 +6,7 @@ import com.hot.modules.erp.entity.MaterialEntity;
 import com.hot.modules.erp.service.ErpService;
 import com.kingdee.bos.webapi.entity.QueryParam;
 import com.kingdee.bos.webapi.entity.RepoRet;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/erp")
+@Slf4j
 public class ErpController {
     @Autowired
     private ErpService erpService;
@@ -72,23 +74,18 @@ public class ErpController {
     @PostMapping("/material/queryBatch")
     public Result<List<MaterialEntity>> executeBillQuery(@RequestBody QueryParam queryParam) {
         try {
-            // 设置默认值
-            if ( queryParam.getTopRowCount() == 0) {
-                queryParam.setTopRowCount(1000);
-            }
-            if (queryParam.getLimit() == 0) {
-                queryParam.setLimit(100);
-            }
 
             // 执行查询
             List<MaterialEntity> resultList = erpService.executeBillQuery(queryParam, MaterialEntity.class);
 
             if (resultList != null && !resultList.isEmpty()) {
-                return Result.success(resultList);
+                return Result.success(resultList,"erp物料数据同步成功，成功更新" + resultList.size() + "条数据到数据库");
             } else {
-                return Result.fail(ResultCode.FAIL, "没有查询到数据");
+                log.info("erp同步失败，无数据");
+                return Result.fail(ResultCode.FAIL, "erp同步失败，无数据");
             }
         } catch (Exception e) {
+            log.error("erp同步发生错误，原因：{}", e.getMessage());
             e.printStackTrace();
             return Result.fail(ResultCode.SERVER_ERR, e.getMessage());
         }
